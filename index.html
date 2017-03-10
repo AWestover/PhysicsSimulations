@@ -7,11 +7,18 @@
  			}
  			#ElementKey{
  				visibility: hidden;
+                position: absolute;
  			}
+            .text{
+            	position: absolute;
+            }
  		</style>
     	<title>DC Electric Circuit Info</title>
   	</head>
   	<body>
+   	 	<div id="ElementKey" class="text">
+  			<h3>R for Resistor<br>B  for Battery</h3>
+   		</div>
   		<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
   		<script>
   			var ElementKey=document.getElementById("ElementKey");
@@ -21,28 +28,19 @@
   				//var nextTtpe=prompt()
   				console.log("yo my first twst bro");
   			};
-
   			var CircuitElements=function(p,type,name){//type means series or parallel with the p location spot
   				this.p=p;
   				this.type=type;
   				this.name=name || "A Circuit Element";
   			};
-
   			CircuitElements.prototype.Battery=function(r){
  					
-
   			};
-
   			CircuitElements.prototype.Resistor=function(r){
  					
-
   			};
-
-
   		</script>
   		<button id="addCE" onclick="promptAddCE()">Add a Circuit Element</button>
-  		<div id="ElementKey">
-  			<h3>R for Resistor<br>B  for Battery</h3>
-   		</div>
+  		
   	</body>
 </html>
