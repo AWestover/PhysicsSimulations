@@ -1,6 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>DC Electric Circuit Info</title>
-  </head>
+ 	<head>
+ 		<style>
+ 			body{
+ 				background-color: blue;
+ 			}
+ 			#ElementKey{
+ 				visibility: hidden;
+ 			}
+ 		</style>
+    	<title>DC Electric Circuit Info</title>
+  	</head>
+  	<body>
+  		<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+  		<script>
+  			var ElementKey=document.getElementById("ElementKey");
+  			var promptAddCE=function(){
+  				ElementKey.style.visibility="visible";
+  				//while prompt("What type of Circuit Element would you like to add?");
+  				//var nextTtpe=prompt()
+  				console.log("yo my first twst bro");
+  			};
+
+  			var CircuitElements=function(p,type,name){//type means series or parallel with the p location spot
+  				this.p=p;
+  				this.type=type;
+  				this.name=name || "A Circuit Element";
+  			};
+
+  			CircuitElements.prototype.Battery=function(r){
+ 					
+
+  			};
+
+  			CircuitElements.prototype.Resistor=function(r){
+ 					
+
+  			};
+
+
+  		</script>
+  		<button id="addCE" onclick="promptAddCE()">Add a Circuit Element</button>
+  		<div id="ElementKey">
+  			<h3>R for Resistor<br>B  for Battery</h3>
+   		</div>
+  	</body>
 </html>
