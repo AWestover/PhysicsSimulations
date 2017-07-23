@@ -16,7 +16,7 @@ var max_speed;
 var dt;
 
 
-// resets all of the particels, initializes the pariticles array to empty set and then repopulates it
+// resets all of the particels, initializes the particles array to empty set and then repopulates it
 function reset_sim () {
 	//initialize variables
 	particles = [];
@@ -44,8 +44,23 @@ function env_changes() {
 	if (!isNaN(parseInt(document.getElementById('canvas width').value))) {
 		screen_dims[0] = parseInt(document.getElementById('canvas width').value);
 	}
+	var proposed_allowed_particles_num = parseInt(document.getElementById('number of allowed particles'));
+	var proposed_not_allowed_particles_num = parseInt(document.getElementById('number of not allowed particles'));
+	if (!isNaN(proposed_allowed_particles_num) && !isNaN(proposed_not_allowed_particles_num)) {
+		//initialize variables
+		num_particles = [proposed_allowed_particles_num, proposed_not_allowed_particles_num];
+		particles = [];
+		// creates the allowed particles
+		for (var i = 0; i < num_particles[0]; i++) {
+			particles.push(new Particle(createVector(random()*screen_dims[0], random()*channel_pos[1]), p5.Vector.random2D(), [10, 10], 'allowed', max_speed));
+		}
+		// Create the not allowed particles
+		for (var i = 0; i < num_particles[1]; i++) {
+			particles.push(new Particle(createVector(random()*screen_dims[0], random()*channel_pos[1]), p5.Vector.random2D(), [7, 7], 'not allowed', max_speed));
+		}
+	}
 	resizeCanvas(screen_dims[0], screen_dims[1]);
-	for (var i = 0; i < pariticles.length; i++) {
+	for (var i = 0; i < particles.length; i++) {
 		particles[i].max_speed = max_speed;
 	}
 }
