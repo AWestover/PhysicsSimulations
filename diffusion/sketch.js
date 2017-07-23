@@ -2,7 +2,7 @@
 // A simple diffusion simulation
 
 // variables initialized
-var screen_dims = [500, 500];
+var screen_dims = [500, 400];
 var channel_pos = [0.4*screen_dims[0], 0.4*screen_dims[1]];
 var channel_dims = [0.2*screen_dims[0], 0.2*screen_dims[1]];
 var boundary_bands_loc = [[0, 0.45*screen_dims[1]], [0.6*screen_dims[0], 0.45*screen_dims[1]]]; //impassable strips on either side of the channel
@@ -20,8 +20,6 @@ var dt;
 function reset_sim () {
 	//initialize variables
 	particles = [];
-	max_speed = 0.05;
-	dt = 30;
 	// creates the allowed particles
 	for (var i = 0; i < num_particles[0]; i++) {
 		particles.push(new Particle(createVector(random()*screen_dims[0], random()*channel_pos[1]), p5.Vector.random2D(), [10, 10], 'allowed', max_speed));
@@ -34,12 +32,19 @@ function reset_sim () {
 
 // handles the input tags, makes sure calid integer input is given
 function env_changes() {
-	if (!isNaN(dt)) {
+	if (!isNaN(parseInt(document.getElementById('dt').value))) {
 		dt = parseInt(document.getElementById('dt').value);
 	}
-	if (!isNaN(max_speed)) {
+	if (!isNaN(parseInt(document.getElementById('heat').value))) {
 		max_speed = parseInt(document.getElementById('heat').value);
 	}
+	if (!isNaN(parseInt(document.getElementById('canvas height').value))) {
+		screen_dims[1] = parseInt(document.getElementById('canvas height').value);
+	}
+	if (!isNaN(parseInt(document.getElementById('canvas width').value))) {
+		screen_dims[0] = parseInt(document.getElementById('canvas width').value);
+	}
+	resizeCanvas(screen_dims[0], screen_dims[1]);
 	for (var i = 0; i < pariticles.length; i++) {
 		particles[i].max_speed = max_speed;
 	}
