@@ -7,13 +7,13 @@ var channel_pos = [0.4*screen_dims[0], 0.4*screen_dims[1]];
 var channel_dims = [0.2*screen_dims[0], 0.2*screen_dims[1]];
 var boundary_bands_loc = [[0, 0.45*screen_dims[1]], [0.6*screen_dims[0], 0.45*screen_dims[1]]]; //impassable strips on either side of the channel
 var boundary_bands_dims = [[0.4*screen_dims[0], 0.1*screen_dims[1]], [0.4*screen_dims[0], 0.1*screen_dims[1]]];
-var screen_color = [0, 0, 100];
+var screen_color = [200, 200, 255];
 
-var particles;
+var particles = [];
 var num_particles = [10, 10]; // type allowed through channel, type not allowed through channel
-var max_speed;
+var max_speed = 0.05;
 
-var dt;
+var dt = 30;
 
 
 // resets all of the particels, initializes the particles array to empty set and then repopulates it
@@ -32,20 +32,24 @@ function reset_sim () {
 
 // handles the input tags, makes sure calid integer input is given
 function env_changes() {
-	if (!isNaN(parseInt(document.getElementById('dt').value))) {
-		dt = parseInt(document.getElementById('dt').value);
+	var proposed_dt = parseFloat(document.getElementById('dt').value);
+	if (!isNaN(proposed_dt)) {
+		dt = proposed_dt;
 	}
-	if (!isNaN(parseInt(document.getElementById('heat').value))) {
-		max_speed = parseInt(document.getElementById('heat').value);
+	var proposed_max_speed = parseFloat(document.getElementById('heat').value);
+	if (!isNaN(proposed_max_speed)) {
+		max_speed = proposed_max_speed;
 	}
-	if (!isNaN(parseInt(document.getElementById('canvas height').value))) {
-		screen_dims[1] = parseInt(document.getElementById('canvas height').value);
+	var proposed_canvas_height = parseFloat(document.getElementById('canvas height').value);
+	if (!isNaN(proposed_canvas_height)) {
+		screen_dims[1] = proposed_canvas_height;
 	}
-	if (!isNaN(parseInt(document.getElementById('canvas width').value))) {
-		screen_dims[0] = parseInt(document.getElementById('canvas width').value);
+	var proposed_canvas_width = parseFloat(document.getElementById('canvas width').value);
+	if (!isNaN(proposed_canvas_width)) {
+		screen_dims[0] = proposed_canvas_width;
 	}
-	var proposed_allowed_particles_num = parseInt(document.getElementById('number of allowed particles'));
-	var proposed_not_allowed_particles_num = parseInt(document.getElementById('number of not allowed particles'));
+	var proposed_allowed_particles_num = parseFloat(document.getElementById('number of allowed particles').value);
+	var proposed_not_allowed_particles_num = parseFloat(document.getElementById('number of not allowed particles').value);
 	if (!isNaN(proposed_allowed_particles_num) && !isNaN(proposed_not_allowed_particles_num)) {
 		//initialize variables
 		num_particles = [proposed_allowed_particles_num, proposed_not_allowed_particles_num];
