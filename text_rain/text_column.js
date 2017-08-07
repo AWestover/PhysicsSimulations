@@ -22,9 +22,9 @@ text_column.prototype.set_random_chars = function() {
 
 
 // draws the colum of text
-text_column.prototype.display = function() {
+text_column.prototype.display = function(tc_color) {
 	for (var i = 0; i < this.num_chars; i++) {
-		fill(0, 255, 0);
+		fill(tc_color[0], tc_color[1], tc_color[2]);
 		textSize(char_text_size);
 		text(this.char_list[i], this.x, this.y + char_text_size*i);
 		if (random(0, this.switchRate) < 1) {
