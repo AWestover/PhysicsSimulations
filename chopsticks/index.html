@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Alek's Game</title>    
+        <script src= "http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js"></script>
+        <style>
+        canvas{position: relative;}
+        body{background-color: black}
+        h1{background-color: red; color:black; position: relative; left:25px; width:550px}
+        </style>
+    </head>
+    <body>
+        <canvas id = "canvas" width =1000 height =800></canvas>
+        <h1>AI chopsticks computers will soon exist.</h1>
+    <script>
+    var canx = 600;
+    var cany = 600;
+    var canvas = document.getElementById("canvas");
+    var processing = new Processing(canvas, function(processing) {
+        processing.size(canx, cany);
+        processing.background(0xFFF);
+        var mouseIsPressed = false;
+        processing.mousePressed = function () {
+            mouseIsPressed = true; 
+        };
+        processing.mouseReleased = function () {
+            mouseIsPressed = false; 
+        };
+        var keyIsPressed = false;
+        processing.keyPressed = function () { 
+            keyIsPressed = true; 
+        };
+        processing.keyReleased = function () { 
+            keyIsPressed = false; 
+        };
+        with (processing) {
+//***********ALEK*****************//
+var startScreen=1;
+var Hands=[1,1,1,1];
+var OldHands=[1,1,1,1];
+var won = 'no one';
+var quadrant=0;
+var validMove=0;
+var playerConfirmationStage=0;
+var firstChance=1;
+var oked=0;
+var Match=0;
+var train=0;
+//duplicate thing doesn't work:(
+var BestCompStrat=[
+[2,1,1,0,3,1,1,0],
+[1,1,1,2,1,2,0,2],
+[1,3,0,2,1,3,0,0],
+[1,4,0,0,0,4,0,0],
+[2,1,1,0,3,1,1,0],
+[1,1,1,2,1,0,2,2],
+[1,0,4,2,1,2,2,2],
+[1,2,4,2,0,2,4,2],
+[1,2,4,1,1,2,4,0],
+[1,3,4,0,0,3,4,0],
+[1,1,1,1,1,0,2,1],
+[1,0,3,1,1,2,1,1],
+[2,2,1,0,4,2,1,0],
+[2,2,1,2,4,2,1,2],
+[4,1,1,2,0,1,1,2],
+[0,1,3,2,0,1,3,0],
+[1,2,1,1,1,0,3,1],
+[1,0,4,1,1,3,1,1],
+[1,4,1,1,1,2,3,1],
+[1,2,4,1,0,2,4,1],
+[0,3,4,1,0,3,4,0],
+[1,2,4,1,0,2,4,1],
+[0,3,4,1,0,3,4,0],
+[1,1,1,1,1,1,1,2],
+[3,1,1,0,4,1,1,0],
+[2,1,1,2,2,2,0,2],
+[2,4,0,2,2,2,2,2],
+[1,2,2,3,1,2,2,0],
+[1,3,2,0,3,3,2,0],
+[1,3,2,2,1,3,2,0],
+[1,4,2,0,0,4,2,0],
+[2,1,1,0,3,1,1,0],
+[1,1,1,2,1,0,2,2],
+[3,0,2,0,0,0,2,0],
+[1,1,1,1,1,0,2,1],
+[1,0,3,1,1,2,1,1],
+[1,3,1,1,1,2,2,1],
+[1,3,2,1,4,3,2,1],
+[4,3,1,1,0,3,1,1],
+[0,4,1,1,0,4,1,0],
+[1,2,1,1,1,0,3,1],
+[2,0,3,0,0,0,3,0]
+];
+frameRate(100);
+var playerStrat=[];
+var stolenStrat=[];
+var Strat=BestCompStrat;
+var countelements=0;
+var countelementsagain=0;
+var dontAddDuplicates=function(){
+    for(var i = 0; i<playerStrat.length; i++){
+        for(var a = 0; a<Strat.length; a++){
+            countelements=0;
+            for(var c = 0; c<8; c++){
+                if(playerStrat[i][c]===Strat[a][c]){
+                    countelements+=1;
+                }
+            }
+        }
+        for(var l = 0; l<stolenStrat.length; l++){
+            countelementsagain=0;
+            for(var c = 0; c<8; c++){
+                if(playerStrat[i][c]===stolenStrat[l][c]){
+                    countelementsagain+=1;
+                }
+            }
+        }
+        if(countelements<8&&countelementsagain<8){
+            stolenStrat.push(playerStrat[i]);
+        }
+    }
+    return stolenStrat;
+};
+var drawHand=function(){
+    for (var i=0; i<Hands[0]; i++){ellipse(0.9375*width,0.225*height+0.05*height*i,0.1875*width,0.05*height);}
+    for (var i=0; i<Hands[2]; i++){ellipse(0.025*width,0.725*height+0.05*height*i,0.1875*width,0.05*height);}
+    for (var i=0; i<Hands[1]; i++){ellipse(0.025*width,0.225*height+0.05*height*i,0.1875*width,0.05*height);}
+    for (var i=0; i<Hands[3]; i++){ellipse(0.9375*width,0.725*height+0.05*height*i,0.1875*width,0.05*height);}
+};
+var updateScreen=function(){
+    background(0, 101, 168);
+    line(0,height/2,width,height/2);
+    line(width/2,0,width/2,height);
+    fill(0, 0, 0);
+    textSize(20);
+    text("Computer",0.0625*width,0.075*height);
+    text("Player",0.7625*width,0.075*height);
+    text(Hands[0],0.5375*width,0.475*height);
+    text(Hands[1],0.4425*width,0.475*height);
+    text(Hands[2],0.4425*width,0.5725*height);
+    text(Hands[3],0.5375*width,0.5725*height);
+    drawHand();
+};
+var turn='no one';
+var setUpGame=function(){
+    turn = ['computer','player'][round(random(-0.4,1))];
+    Hands=[1,1,1,1];
+    won='no one';
+    startScreen=0;
+    firstChance=1;
+    oked=0;
+    train=0;
+};
+var over5Reset = function(){for(var i=0; i<4;i++){if(Hands[i]>4){Hands[i]-=5;}}};
+var playerMove = function(){
+    if(firstChance===1){
+        for(var i=0; i<4;i++){OldHands[i]=Hands[i];}
+        firstChance=0;
+    }
+    updateScreen();
+    if(mouseIsPressed){
+        if(mouseX>width/2&&mouseY<height/2){quadrant = 1;}
+        if(mouseX<width/2&&mouseY<height/2){quadrant = 2;}
+        if(mouseX<width/2&&mouseY>height/2){quadrant = 3;}
+        if(mouseX>width/2&&mouseY>height/2){quadrant = 4;}
+    }
+    if(keyIsPressed){
+        if(key.code>47&&key.code<53){
+            validMove=0;
+            if(quadrant===1){Hands[0]=key-48;}
+            if(quadrant===2){Hands[1]=key-48;}
+            if(quadrant===3){Hands[2]=key-48;}
+            if(quadrant===4){Hands[3]=key-48;}
+        }
+        if(key.toString()==='x'){
+            playerConfirmationStage=0;
+            for(var i=0; i<4;i++){Hands[i]=OldHands[i];}
+            validMove=0;
+        }
+        if(validMove===1){
+            if(key.toString()==='d' && playerConfirmationStage===0){playerConfirmationStage=1;} 
+            if(key.toString()==='o' && playerConfirmationStage===1){playerConfirmationStage=2;}
+            if(key.toString()==='n' && playerConfirmationStage===2){playerConfirmationStage=3;}
+            if(key.toString()==='e' && playerConfirmationStage===3){playerConfirmationStage=4;}
+            if(key.toString()==='f'){playerConfirmationStage=4;}
+        }
+    }
+    var PrStatic=(Hands[3]===OldHands[3] && Hands[0]===OldHands[0]);
+    var RtCrHt=((Hands[2]===(OldHands[2]+Hands[0])%5&&Hands[0]!==0)||(Hands[2]===(OldHands[2]+Hands[3])%5&&Hands[3]!==0));
+    var LtCrHt=((Hands[1]===(OldHands[1]+Hands[0])%5&&Hands[0]!==0)||(Hands[1]===(OldHands[1]+Hands[3])%5&&Hands[3]!==0));
+    var CrStatic=(Hands[2]===OldHands[2] && Hands[1]===OldHands[1]);
+    var validPrSwitch=(((OldHands[0]+OldHands[3])===(Hands[0]+Hands[3]))&&OldHands[0]!==Hands[0]&&OldHands[3]!==Hands[3]&&Hands[0]!==OldHands[3]&&Hands[3]!==OldHands[0]&&Hands[0]<5&&Hands[3]<5);
+    var notSuicide=true;
+    if(((Hands[0]===0&&Hands[3]===5)||(Hands[3]===5&&Hands[0]===0)||(Hands[3]===0&&Hands[0]===0))){notSuicide=false;}
+  
+    if((PrStatic&&((Hands[1]===OldHands[1]&&RtCrHt&&OldHands[2]!==0)||(Hands[2]===OldHands[2]&&LtCrHt&&OldHands[1]!==0)))||(CrStatic&&validPrSwitch&&notSuicide)){validMove=1;}
+    if(validMove===1){text("Type done to confirm your move and x to cancel it.",0.3625*width,0.62*height,190,300);}
+    if(playerConfirmationStage===4){
+        turn='computer';
+        validMove=0;
+        playerConfirmationStage=0;
+        firstChance=1;
+        if(train===5){
+            playerStrat.push([OldHands[2],OldHands[3],OldHands[0],OldHands[1],Hands[2],Hands[3],Hands[0],Hands[1]]);
+        }
+    }
+};
+var computerMove = function(){
+    if(firstChance===1){
+        for(var i=0; i<4;i++){OldHands[i]=Hands[i];}
+        firstChance=0;
+    }
+    updateScreen();
+    for(var z=0; z<Strat.length; z++){
+        for(var p=0; p<4;p++){
+            if(Strat[z][p]===OldHands[p]){
+                Match+=1;
+            }
+        }
+        if(Match===4){
+            for(var k=0; k<4;k++){
+                Hands[k]=Strat[z][k+4];
+            }
+            Strat.splice(z,1);
+            Strat.push([OldHands[0],OldHands[1],OldHands[2],OldHands[3],Hands[0],Hands[1],Hands[2],Hands[3]]);
+            validMove=1;
+            break;
+        }
+        if(Match!==4){
+            Match=0;
+        }
+    }
+    while(validMove!==1){
+        for(var i = 0; i<4; i++){Hands[i]=round(random(0,8));}
+        var PrStatic=(Hands[3]===OldHands[3]&&Hands[0]===OldHands[0]);
+        var RtPrHt=(((Hands[0]===(OldHands[0]+Hands[2])%5)&&Hands[2]!==0)||((Hands[0]===(OldHands[0]+Hands[1])%5)&&Hands[1]!==0));
+        var LtPrHt=(((Hands[3]===(OldHands[3]+Hands[2])%5)&&Hands[2]!==0)||((Hands[3]===(OldHands[3]+Hands[1])%5)&&Hands[1]!==0));
+        var CrStatic=(Hands[2]===OldHands[2]&&Hands[1]===OldHands[1]);
+        var validCrSwitch=( ((OldHands[2]+OldHands[1]) === (Hands[2]+Hands[1])) && (OldHands[2]!==Hands[2]) && (OldHands[1]!==Hands[1]) && (Hands[1]!==OldHands[2]) && (Hands[2]!==OldHands[1]) && Hands[2]<5 && Hands[1]<5);
+        var notSuicide=true;
+        if(((Hands[1]===0&&Hands[2]===5)||(Hands[1]===5&&Hands[2]===0)||(Hands[1]===0&&Hands[2]===0))){
+            notSuicide=false;
+        }
+        if(CrStatic&&Hands[3]===OldHands[3]&&RtPrHt&&OldHands[0]!==0){
+            validMove=1;
+        }
+        if(CrStatic&&Hands[0]===OldHands[0]&&LtPrHt&&OldHands[3]!==0){
+            if(validMove===1){
+                validMove=2;
+            }
+            if(validMove===0){
+                validMove=1;
+            }
+        }
+        if(PrStatic&&validCrSwitch&&notSuicide&&Hands[2]!==OldHands[1]&&Hands[1]!==OldHands[2]){
+            if(validMove!==0){
+                validMove=0;
+            }
+            else if(validMove===0){
+                validMove=1;
+            }
+        }
+    }
+    if(validMove===1){turn='player';firstChance=1;validMove=0;Match=0;}
+};
+var checkGameOver= function(){
+    over5Reset();
+    if(Hands[1]===0&&Hands[2]===0){won='player';}
+    if(Hands[0]===0&&Hands[3]===0){won='computer';}
+    if(train===5&&won!=='no one'){
+        dontAddDuplicates();
+        for(var i = 0; i<stolenStrat.length;i++){
+            println('['+stolenStrat[i]+'],')
+        }
+    }
+};
+var draw = function(){
+    over5Reset();
+    if(startScreen===1){
+        background(255,255,0);
+        fill(0,0,255);
+        textSize(0.075*width);
+        text("CHOPSTICKS!",0.3*width,0.125*height);
+        textSize(0.025*width+0.025*height);
+        text("Made by Alek, perfected by Poe",0.025*width,0.03*height,0.25*width,600);
+        text("When it is your turn click on the hand you want to change and type the outcome you want in it's box. If you input a possible outcome and type 'done' the computer will go after you. Type X to cancel. Your objective is to get the computer to have all 5's or 0's(they are equivelant as when a hand goes to 5 or above you subtract five from it). Click anywhere to begin.       \n                    Good Luck!",0.25*width,116,350,400);
+        if(mouseIsPressed){setUpGame();}
+    }
+    if(won==='no one' && startScreen===0){
+        if(oked!==2){
+            updateScreen();
+            text("I'm really good, type ok to begin",0.275*width,0.375*height);
+            if(keyIsPressed){
+                if(key.toString()==='o'&&oked===0){oked=1;}
+                if(key.toString()==='k'&&oked===1){oked=2;}
+                if(key.toString()==='f'){
+                    train=5;
+                    oked=2;
+                }
+            }
+        }
+        if(oked===2){
+            if(turn==='computer'){
+                checkGameOver();
+                if(won==='no one'){
+                    computerMove();
+                    over5Reset();
+                    checkGameOver();
+                }   
+            }
+            if(turn==='player'){
+                playerMove();
+                over5Reset();
+                text("It your turn. Type x to reset the hands.",0.4*width,0.25*height,150,400);
+            }
+        }
+    }
+    if (won!=='no one'){
+        textSize(37);
+        if(won==='player'){
+            background(255,0,0);
+            text("Good Job, You Won",46,200); 
+        }
+        if(won==='computer'){
+            background(0, 255, 0);
+            text("Bad Job, You didn't Win",46,200); 
+        }
+        fill(55, 255, 255);
+        rect(8,8,198,35);
+        fill(0, 0, 0);
+        textSize(20);
+        text("RESTART GAME",32,35);
+        if(mouseIsPressed&&8<mouseX&&mouseX<206&&8<mouseY&&mouseY<43){setUpGame();}
+    }
+};
+}
+        if (typeof draw !== 'undefined') processing.draw = draw;
+    });
+    </script>
+    </body>
+</html>
