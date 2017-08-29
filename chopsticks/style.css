@@ -1,0 +1,25 @@
+.my_canvas {
+  position: absolute;
+  right: 1%;
+  top: 1%;
+  margin: 2%;
+}
+
+body {
+  background-color: black;
+}
+
+div.buttons button {
+    padding: 0.5%;
+    margin: 1%;
+}
+
+div.buttons {
+    margin: 2%;
+    width: 30%;
+}
+
+h1 {
+  color: white;
+  margin: 2%;
+}
