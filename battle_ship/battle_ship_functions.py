@@ -58,12 +58,24 @@ def computer_move(boards):
 
 
 # players move
-def player_move(boards):
+def player_move_terminal_input(boards):
     print("Make a guess")
     indices = [0, 0]
     indices[0] = int(input("X\t"))
     indices[1] = int(input("Y\t"))
     guess(boards, "player", indices)
+
+
+# players move
+def player_move(boards, width, height):
+    mousePos = pygame.mouse.get_pos()
+    print("Make a guess")
+    index = [0, 0]
+    index[0] = int(mousePos[0]/width)
+    index[1] = int(mousePos[1]/height)
+    guess(boards, "player", index)
+    print(index)
+    print("index", index[0], index[1])
 
 
 # run a guess through the board states
@@ -91,6 +103,7 @@ def exit_game():
 
 # updates the board
 def update_board(n, windowSurface, width, height, dx, board_state=[]):
+    windowSurface.fill((255, 255, 255))
     for i in range(0, n):
         for j in range(0, n):
             if board_state[i][j] == "H":
@@ -103,30 +116,8 @@ def update_board(n, windowSurface, width, height, dx, board_state=[]):
                 fill_color = (0, 0, 255)
 
             pygame.draw.rect(windowSurface, fill_color, (i*width + dx, j*height + dx, width - 2*dx, height - 2* dx), 0)
+
     pygame.display.update()
-
-
-# mouse pos to i, j
-def sketch(mouseDown):
-    if mouseDown:
-        mousePos = pygame.mouse.get_pos()
-        print(mousePos)
-        i = int(mousePos[0]/width)
-        j = int(mousePos[1]/height)
-        print("index", i, j)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
