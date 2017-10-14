@@ -90,7 +90,7 @@ def exit_game():
 
 
 # updates the board
-def update_board(n, windowSurface, width, height, board_state=[]):
+def update_board(n, windowSurface, width, height, dx, board_state=[]):
     for i in range(0, n):
         for j in range(0, n):
             if board_state[i][j] == "H":
@@ -102,7 +102,7 @@ def update_board(n, windowSurface, width, height, board_state=[]):
             elif board_state[i][j] == "N":
                 fill_color = (0, 0, 255)
 
-            pygame.draw.rect(windowSurface, fill_color, (i*width, j*height, width, height), 0)
+            pygame.draw.rect(windowSurface, fill_color, (i*width + dx, j*height + dx, width - 2*dx, height - 2* dx), 0)
     pygame.display.update()
 
 
