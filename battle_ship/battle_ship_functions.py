@@ -1,4 +1,7 @@
-def print_boards(turn=None):
+import random
+
+# print the board
+def print_boards(boards, n, turn=None):
     if turn == None:
         print("player view of their hits/misses")
         for i in range(0, n):
@@ -38,27 +41,32 @@ def print_boards(turn=None):
     print("-"*200)
 
 
-def place_ship(entity, index):
+# place a ship at an index
+def place_ship(boards, entity, index):
     if entity == "player":
         boards[1][index[0]][index[1]] = '1'
     else:
         boards[3][index[0]][index[1]] = '1'
+    return boards
 
 
-def computer_move():
+# computers move
+def computer_move(boards):
     indices = [random.randint(0, 9), random.randint(0, 9)]
-    guess("enemy", indices)
+    guess(boards, "enemy", indices)
 
 
-def player_move():
+# players move
+def player_move(boards):
     print("Make a guess")
     indices = [0, 0]
     indices[0] = int(input("X\t"))
     indices[1] = int(input("Y\t"))
-    guess("player", indices)
+    guess(boards, "player", indices)
 
 
-def guess(entity, index):
+# run a guess through the board states
+def guess(boards, entity, index):
     res = 'M'
     if entity == "player":
         if boards[3][index[0]][index[1]] == '1':
@@ -71,3 +79,4 @@ def guess(entity, index):
             res = 'H'
         boards[1][index[0]][index[1]] = res
         boards[2][index[0]][index[1]] = res
+    return boards
