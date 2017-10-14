@@ -1,6 +1,5 @@
 from battle_ship_functions import *
 from pygame.locals import *
-import pprint
 import random
 import pygame
 import sys
@@ -53,11 +52,12 @@ playing = True
 turn = "player"
 
 
+update_board(n, windowSurface, width, height, 1, boards[0])
+
 # run the game loop
 while playing:
-    windowSurface.fill((255, 255, 255))
+    # WARNING: this will be run through more than once per round
 
-    update_board(n, windowSurface, width, height, 1, boards[0])
     for event in pygame.event.get():
         if event.type == QUIT:
             exit_game()
@@ -70,15 +70,17 @@ while playing:
             mouseDown = False
 
     if turn == "player":
-        print_boards(boards, n, turn)
-        player_move(boards)
-        turn = "computer"
+        if mouseDown:
+            print_boards(boards, n, turn)
+            player_move(boards, width, height)
+            turn = "computer"
+            update_board(n, windowSurface, width, height, 1, boards[0])
 
     else:
         print_boards(boards, n, turn)
         computer_move(boards)
         turn = "player"
-
+        update_board(n, windowSurface, width, height, 1, boards[0])
 
 
 
