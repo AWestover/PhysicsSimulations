@@ -56,6 +56,8 @@ turn = "player"
 # run the game loop
 while playing:
     windowSurface.fill((255, 255, 255))
+
+    update_board(n, windowSurface, width, height, 1, boards[0])
     for event in pygame.event.get():
         if event.type == QUIT:
             exit_game()
@@ -76,8 +78,6 @@ while playing:
         print_boards(boards, n, turn)
         computer_move(boards)
         turn = "player"
-
-    update_board(n, windowSurface, width, height, boards[0])
 
 
 
