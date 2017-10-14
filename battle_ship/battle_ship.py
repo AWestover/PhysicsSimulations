@@ -1,8 +1,7 @@
+# libraries
 from battle_ship_functions import *
 from pygame.locals import *
-import random
 import pygame
-import sys
 
 
 # Player view of hits/misses,
