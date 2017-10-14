@@ -49,6 +49,7 @@ windowSurface = pygame.display.set_mode(screenDims, RESIZABLE)
 
 # basic parameters
 mouseDown = False
+mouseJustReleased = False
 already_setup = False
 playing = True
 turn = "player"
@@ -86,6 +87,7 @@ while playing:
             mouseDown = True
         elif event.type == pygame.MOUSEBUTTONUP:
             mouseDown = False
+            mouseJustReleased = True
 
         # resize capability
         elif event.type==VIDEORESIZE:
@@ -97,9 +99,11 @@ while playing:
 
         if turn == "player":
             validMove = False
-            if mouseDown:
+            if mouseJustReleased:
                 print_boards(boards, n, turn)
                 validMove = player_move(boards, width, height)
+                mouseJustReleased = False
+
             if validMove != False:
                 turn = "computer"
                 draw_board_globals()
@@ -114,9 +118,10 @@ while playing:
 
     elif not already_setup:
 
-        if mouseDown:
+        if mouseJustReleased:
             place_ship(boards, "player", get_clicked_box(width, height), tentative=True)
             draw_board_globals()
+            mouseJustReleased = False
 
 
 
