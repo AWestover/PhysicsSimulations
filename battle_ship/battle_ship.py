@@ -35,13 +35,9 @@ for i in range(0, n):
 
 
 for i in range(0, 5):
-    place_ship("enemy", [i, 0])
+    place_ship(boards, "enemy", [i, 0])
 for i in range(0, 5):
-    place_ship("player", [0, i])
-
-
-
-
+    place_ship(boards, "player", [0, i])
 
 
 
@@ -109,13 +105,13 @@ while playing:
             mouseDown = False
 
     if turn == "player":
-        print_boards(turn)
-        player_move()
+        print_boards(boards, n, turn)
+        player_move(boards)
         turn = "computer"
 
     else:
-        print_boards(turn)
-        computer_move()
+        print_boards(boards, n, turn)
+        computer_move(boards)
         turn = "player"
 
     update_board(boards[0])
