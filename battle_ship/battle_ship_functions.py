@@ -55,8 +55,10 @@ def place_ship(boards, entity, index):
 
 # computers move
 def computer_move(boards):
-    indices = [random.randint(0, 9), random.randint(0, 9)]
-    guess(boards, "enemy", indices)
+    goodMove = False
+    while not goodMove:
+        indices = [random.randint(0, 9), random.randint(0, 9)]
+        goodMove = guess(boards, "enemy", indices)
 
 
 # players move
@@ -71,13 +73,9 @@ def player_move_terminal_input(boards):
 # players move
 def player_move(boards, width, height):
     mousePos = pygame.mouse.get_pos()
-    print("Make a guess")
-    index = [0, 0]
-    index[0] = int(mousePos[0]/width)
-    index[1] = int(mousePos[1]/height)
-    guess(boards, "player", index)
-    print(index)
-    print("index", index[0], index[1])
+    index = [int(mousePos[0]/width), int(mousePos[1]/height)]
+    result = guess(boards, "player", index)
+    return result
 
 
 # run a guess through the board states
@@ -86,12 +84,16 @@ def guess(boards, entity, index):
     if entity == "player":
         if boards[3][index[0]][index[1]] == 'S':
             res = 'H'
+        elif boards[3][index[0]][index[1]] in ['M', 'H']:
+            return False
         boards[3][index[0]][index[1]] = res
         boards[0][index[0]][index[1]] = res
 
     else:
         if boards[1][index[0]][index[1]] == 'S':
             res = 'H'
+        elif boards[1][index[0]][index[1]] in ['M', 'H']:
+            return False
         boards[1][index[0]][index[1]] = res
         boards[2][index[0]][index[1]] = res
     return boards
