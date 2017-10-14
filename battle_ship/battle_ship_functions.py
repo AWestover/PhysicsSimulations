@@ -1,4 +1,5 @@
 import random
+import pygame
 
 # print the board
 def print_boards(boards, n, turn=None):
@@ -44,9 +45,9 @@ def print_boards(boards, n, turn=None):
 # place a ship at an index
 def place_ship(boards, entity, index):
     if entity == "player":
-        boards[1][index[0]][index[1]] = '1'
+        boards[1][index[0]][index[1]] = 'S'
     else:
-        boards[3][index[0]][index[1]] = '1'
+        boards[3][index[0]][index[1]] = 'S'
     return boards
 
 
@@ -69,14 +70,69 @@ def player_move(boards):
 def guess(boards, entity, index):
     res = 'M'
     if entity == "player":
-        if boards[3][index[0]][index[1]] == '1':
+        if boards[3][index[0]][index[1]] == 'S':
             res = 'H'
         boards[3][index[0]][index[1]] = res
         boards[0][index[0]][index[1]] = res
 
     else:
-        if boards[1][index[0]][index[1]] == '1':
+        if boards[1][index[0]][index[1]] == 'S':
             res = 'H'
         boards[1][index[0]][index[1]] = res
         boards[2][index[0]][index[1]] = res
     return boards
+
+
+# ends pygame
+def exit_game():
+    pygame.quit()
+    sys.exit()
+
+
+# updates the board
+def update_board(n, windowSurface, width, height, board_state=[]):
+    for i in range(0, n):
+        for j in range(0, n):
+            if board_state[i][j] == "H":
+                fill_color = (255, 0, 0)
+            elif board_state[i][j] == "M":
+                fill_color = (255, 255, 255)
+            elif board_state[i][j] == "S":
+                fill_color = (0, 0, 0)
+            elif board_state[i][j] == "N":
+                fill_color = (0, 0, 255)
+
+            pygame.draw.rect(windowSurface, fill_color, (i*width, j*height, width, height), 0)
+    pygame.display.update()
+
+
+# mouse pos to i, j
+def sketch(mouseDown):
+    if mouseDown:
+        mousePos = pygame.mouse.get_pos()
+        print(mousePos)
+        i = int(mousePos[0]/width)
+        j = int(mousePos[1]/height)
+        print("index", i, j)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#______________________________________________________________________________
