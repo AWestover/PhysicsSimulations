@@ -69,17 +69,21 @@ while playing:
             mouseDown = False
 
     if turn == "player":
+        validMove = False
         if mouseDown:
             print_boards(boards, n, turn)
-            player_move(boards, width, height)
+            validMove = player_move(boards, width, height)
+        if validMove != False:
             turn = "computer"
             update_board(n, windowSurface, width, height, 1, boards[0])
+            print("Computer take a guess")
 
     else:
         print_boards(boards, n, turn)
         computer_move(boards)
         turn = "player"
         update_board(n, windowSurface, width, height, 1, boards[0])
+        print("Player make a guess")
 
 
 
