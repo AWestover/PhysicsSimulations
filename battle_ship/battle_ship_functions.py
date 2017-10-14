@@ -1,5 +1,7 @@
-import random
+# libraries
 import pygame
+import random
+import sys
 
 # print the board
 def print_boards(boards, n, turn=None):
