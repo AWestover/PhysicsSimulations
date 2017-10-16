@@ -5,9 +5,9 @@ import pygame
 
 """
 Player view of hits/misses,
-Player view of their own board,
+Player view of their own board with computer hits and misses,
 Computer view of hits and misses,
-Computer view of own board
+Computer view of own board with the players hits and misses
 """
 boards = [[], [], [], []]
 n = 10

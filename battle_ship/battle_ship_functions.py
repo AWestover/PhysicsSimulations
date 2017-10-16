@@ -167,5 +167,18 @@ def game_over(boards, n):
     return "no"
 
 
+# counts how many shots have been taken on a board (Hits + Misses)
+# usefull for scoring an algorithm...
+def total_moves_made(boards, n, which_board):
+    move_ct = 0
+    for i in range (0, n):
+        for j in range(0, n):
+            if boards[which_board][i][j] in ["M", "H"]:
+                move_ct += 1
+    #print(boards)
+    return move_ct
+
+
+
 
 #______________________________________________________________________________

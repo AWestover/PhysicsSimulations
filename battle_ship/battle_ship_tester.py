@@ -2,7 +2,7 @@
 from battle_ship_functions import *
 
 num_games = 10**2
-wins = 0
+moves_to_win = []
 
 for game in range(0, num_games):
 
@@ -18,13 +18,25 @@ for game in range(0, num_games):
                 boards[k][i].append('N')
 
     # place ships arbitrarily
-    for j in range(0, 5):
-        place_ship(boards, "player", [0, i])
+    for ship in range(0, 5):
+        place_ship(boards, "player", [0, ship])
+        place_ship(boards, "computer", [ship, 0])
 
+    ct = 0
     while game_over(boards, n) == "no":
         computer_move(boards)
+        ct += 1
 
-    wins += 1 - game_over(boards, n)
+    moves_to_win.append(total_moves_made(boards, n, 1))
 
 
-print("You won " + str(wins/num_games) + "% of your games")
+
+avg_moves_to_win = 0
+for i in range(0, len(moves_to_win)):
+    avg_moves_to_win += moves_to_win[i]
+avg_moves_to_win /= len(moves_to_win)
+
+print("Moves to win statistics")
+print("average " + str(avg_moves_to_win))
+print("max " + str(max(moves_to_win)))
+print("min " + str(min(moves_to_win)))
