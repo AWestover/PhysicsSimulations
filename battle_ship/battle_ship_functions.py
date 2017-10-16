@@ -150,9 +150,21 @@ def player_move_terminal_input(boards):
 
 
 # checks if the games is over
-def game_over(boards):
-    # TODO: this is completely bogus, we need to make this legit
-    return (random.choice([0, 0, 0, 0, 1]))
+def game_over(boards, n):
+    for b in range(0, 2):
+        dead = True
+        for i in range(0, n):
+            # only need to keep looking if deadness is not disproved
+            if dead:
+                for j in range(0, n):
+                    # first looks for ships left in player board then in computer board
+                    if boards[b * 2 + 1][i][j] == 'S':
+                        dead = False
+                        break
+        if dead:
+            return 1 - b
+
+    return "no"
 
 
 
