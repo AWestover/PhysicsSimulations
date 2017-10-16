@@ -1,7 +1,7 @@
 # libraries
 from battle_ship_functions import *
 
-num_games = 10**4
+num_games = 10**2
 wins = 0
 
 for game in range(0, num_games):
@@ -21,10 +21,10 @@ for game in range(0, num_games):
     for j in range(0, 5):
         place_ship(boards, "player", [0, i])
 
-    while not game_over(boards):
+    while game_over(boards, n) == "no":
         computer_move(boards)
 
-    wins += game_over(boards)
+    wins += 1 - game_over(boards, n)
 
 
 print("You won " + str(wins/num_games) + "% of your games")
