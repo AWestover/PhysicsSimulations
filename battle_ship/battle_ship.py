@@ -123,16 +123,27 @@ while playing:
 
             # advance turn if move was made
             if validMove != False:
-                turn = "computer"
-                draw_board_globals()
-                print("Computer take a guess")
+                if game_over(boards, n) != "no":
+                    print("game over")
+                    turn = "game over"
+                else:
+                    turn = "computer"
+                    draw_board_globals()
+                    print("Computer take a guess")
 
         elif turn == "computer":
-            print_boards(boards, n, turn)
-            computer_move(boards)
-            turn = "player"
-            draw_board_globals()
-            print("Player make a guess")
+            if game_over(boards, n) != "no":
+                print("game over")
+                turn = "game over"
+            else:
+                print_boards(boards, n, turn)
+                computer_move(boards)
+                turn = "player"
+                draw_board_globals()
+                print("Player make a guess")
+
+        elif turn == "game  over":
+            print("Well, I guess that's that")
 
     elif not already_setup:
 
