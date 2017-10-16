@@ -19,11 +19,12 @@ def place_ship(boards, entity, index, tentative=False):
 
 
 # computers move
-def computer_move(boards):
+def computer_move(boards, cur_player="computer"):
     goodMove = False
     while not goodMove:
         indices = [random.randint(0, 9), random.randint(0, 9)]
-        goodMove = guess(boards, "enemy", indices)
+        goodMove = guess(boards, cur_player, indices)
+    return goodMove
 
 
 # gets the index of the box that the user clicked in
@@ -148,6 +149,10 @@ def player_move_terminal_input(boards):
     guess(boards, "player", indices)
 
 
+# checks if the games is over
+def game_over(boards):
+    # TODO: this is completely bogus, we need to make this legit
+    return (random.choice([0, 0, 0, 0, 1]))
 
 
 
