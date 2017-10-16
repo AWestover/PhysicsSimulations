@@ -50,9 +50,12 @@ windowSurface = pygame.display.set_mode(screenDims, RESIZABLE)
 # basic parameters
 mouseDown = False
 mouseJustReleased = False
+keyJustReleased = False
 already_setup = False
 playing = True
 turn = "player"
+match_type = "pvc"
+all_match_types = ["cvc", "pvc", "pvp"]
 
 # draws the board without having to input the globals
 def draw_board_globals():
@@ -73,6 +76,7 @@ while playing:
             exit_game()
         # key presses
         elif event.type == pygame.KEYDOWN:
+            keyJustReleased = True
             if event.key == pygame.K_e:
                 exit_game()
             elif event.key == pygame.K_s:
@@ -81,6 +85,11 @@ while playing:
             elif event.key == pygame.K_d:
                 # TODO: check to make sure ship stuff is valid and stuff
                 already_setup = True
+            elif event.key == pygame.K_c:
+                c_mt = all_match_types.index(match_type)
+                c_mt = (c_mt + 1) % len(all_match_types)
+                match_type = all_match_types[c_mt]
+                print("Match type", match_type)
 
         # mouse interaction
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -99,11 +108,20 @@ while playing:
 
         if turn == "player":
             validMove = False
-            if mouseJustReleased:
-                print_boards(boards, n, turn)
-                validMove = player_move(boards, width, height)
-                mouseJustReleased = False
 
+            if match_type == "pvc" or match_type == "pvp":
+                if mouseJustReleased:
+                    print_boards(boards, n, turn)
+                    validMove = player_move(boards, width, height)
+                    mouseJustReleased = False
+
+            elif match_type == "cvc":
+                if keyJustReleased:
+                    validMove = True
+                    validMove = computer_move(boards, cur_player="player")
+                    keyJustReleased = False
+
+            # advance turn if move was made
             if validMove != False:
                 turn = "computer"
                 draw_board_globals()
