@@ -56,6 +56,7 @@ playing = True
 turn = "player"
 match_type = "pvc"
 all_match_types = ["cvc", "pvc", "pvp"]
+availiable_boards = 2
 
 # draws the board without having to input the globals
 def draw_board_globals():
@@ -66,6 +67,16 @@ print("Welcome to the intenseest game of battle ship you will ever play ")
 pygame.display.set_caption("Intense Battle Ship Game")
 draw_board_globals()
 print("Please place your pieces by clicking on the squares on which you want to place ships")
+
+config_file = get_config("configs/config_main.cfg")
+unm = input("Please input your user name\t")
+if unm == config_file.get('login', 'user'):
+    pwd = input("Please varify with the admin password\t")
+    if pwd != config_file.get('login', 'password'):
+        print("Your password did not match. You are being renamed to 'INTRUDER'")
+    else:
+        print("Success, you have admin privellages")
+        availiable_boards = 4
 
 
 # run the game loop
@@ -80,7 +91,7 @@ while playing:
             if event.key == pygame.K_e:
                 exit_game()
             elif event.key == pygame.K_s:
-                cur_display_board = (cur_display_board + 1) % 4
+                cur_display_board = (cur_display_board + 1) % availiable_boards
                 draw_board_globals()
             elif event.key == pygame.K_d:
                 # TODO: check to make sure ship stuff is valid and stuff

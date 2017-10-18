@@ -1,4 +1,5 @@
 # libraries
+import configparser as cp
 import pygame
 import random
 import sys
@@ -179,6 +180,11 @@ def total_moves_made(boards, n, which_board):
     return move_ct
 
 
+# for easy selection of a config file
+def get_config(path):
+    c_config = cp.ConfigParser()
+    c_config.read([path])
+    return c_config
 
 
 #______________________________________________________________________________
