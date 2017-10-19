@@ -9,6 +9,22 @@ for game in range(0, num_games):
     # initialize the boards
     boards = [[], [], [], []]
     n = 10
+    ships = [[], []]  # player, computer 5 ship 4 ship 3 ship 3 ship 2 ship
+
+    ship_types = {
+        '5ship': 5,
+        '4ship': 4,
+        '3ship1': 3,
+        '3ship2': 3,
+        '2ship2': 2
+    }
+
+    ships_left = [5, 4, 3, 3, 2]
+
+
+    for i in range(0, 2):
+        for j in range(0, 5):
+            ships[i].append([])
 
     # initialize board
     for k in range(0, len(boards)):
@@ -20,11 +36,13 @@ for game in range(0, num_games):
     # place ships arbitrarily
     for ship in range(0, 5):
         place_ship(boards, "player", [0, ship])
+        ships[0][0].append([0, ship])
         place_ship(boards, "computer", [ship, 0])
+        ships[0][0].append([0, ship])
 
     ct = 0
     while game_over(boards, n) == "no":
-        computer_move(boards)
+        computer_move(boards, ships_left=ships_left)
         ct += 1
 
     moves_to_win.append(total_moves_made(boards, n, 1))

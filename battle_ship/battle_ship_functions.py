@@ -3,6 +3,7 @@ import configparser as cp
 import pygame
 import random
 import sys
+import pdb
 
 
 # place a ship at an index
@@ -20,13 +21,44 @@ def place_ship(boards, entity, index, tentative=False):
 
 
 # computers move
-def computer_move(boards, cur_player="computer"):
+def computer_move(boards, ships_left=[5, 4, 3, 3, 2], cur_player="computer"):
     goodMove = False
+    if cur_player == "computer":
+        other_player = "player"
+    elif cur_player == "player":
+        other_player = "computer"
+    hitMode = check_located(boards, other_player)
     while not goodMove:
-        indices = [random.randint(0, 9), random.randint(0, 9)]
+        if not hitMode:
+            indices = [random.randint(0, 9), random.randint(0, 9)]
+        else:
+            pdb.set_trace()
+            indices = hitModeShot(boards, ships_left, cur_player=cur_player)
         goodMove = guess(boards, cur_player, indices)
+
     return goodMove
 
+
+# checks whether or not a player's ship has been located any (Hs)
+def check_located(boards, player):
+    if player == "player":
+        player = 1
+    elif player == "computer":
+        player = 3
+    cboard = boards[player]
+    encountered = False
+    for i in range(0, len(cboard)):
+        for j in range(0, len(cboard[i])):
+            if cboard[i][j] == 'H':
+                encountered = True
+    return encountered
+
+
+# makes an educated guess based on the fact that we know that the ship has been hit
+def hitModeShot(boards, ships_left, cur_player="computer"):
+    #for i in range(-ships_left, ships_left):
+
+    return [0, 0]
 
 # gets the index of the box that the user clicked in
 def get_clicked_box(width, height):
@@ -185,6 +217,60 @@ def get_config(path):
     c_config = cp.ConfigParser()
     c_config.read([path])
     return c_config
+
+
+# resets the variables which depend on screenDims
+def resize_dims(newScreenDims, n):
+    screenDims = newScreenDims
+    width = int(screenDims[0]/n)
+    height = int(screenDims[1]/n)
+    return (width, height, screenDims)
+
+
+
+# checks if a ship placement is valid
+def validShipPlacement(boards, n, player, cur_ship_length):
+    if player == "player":
+        player = 1
+    elif player == "computer":
+        player = 3
+
+    cboard = boards[player]
+    mark_index = []
+    proposed_ct = 0
+    for i in range(0, n):
+        for j in range(0, n):
+            if cboard[i][j] == "A":
+                proposed_ct += 1
+
+                if mark_index == []:
+                    mark_index = [i, j]
+
+    if mark_index != []:
+        act_ct1 = 0
+        act_ct2 = 0
+        for i in range(0, cur_ship_length):
+            if cboard[mark_index[0] + i][mark_index[1]]:
+                act_ct1 += 1
+            elif cboard[mark_index[0]][mark_index[1] + i]:
+                act_ct2 += 1
+        if proposed_ct == cur_ship_length:
+            if (act_ct2 == 0 and act_ct1 == cur_ship_length) or (act_ct1 == 0 and act_ct2 == cur_ship_length):
+                return True
+        else:
+            return False
+    else:
+        return False
+
+
+
+# changes all of the staged ship locations to actual locations
+def destage_ships(board, n, to_symbol):
+    for i in range(0, n):
+        for j in range(0, n):
+            if board[i][j] == 'A':
+                board[i][j] = to_symbol
+    return board
 
 
 #______________________________________________________________________________
