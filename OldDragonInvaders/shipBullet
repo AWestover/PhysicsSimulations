@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>test</title>
+		<style>
+			body{
+			  background-color:green;
+			}
+			.block{
+				position: absolute;
+			    background-color: red;
+			    left: 50px;
+			    width: 30px;
+			    height: 30px;
+			    margin: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="block"></div>
+		<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+		<script>	
+		var ct=0;
+		setInterval(function(){
+			ct+=1;
+			if (ct>3){
+				ct=1;
+			}
+			$( ".block" ).animate({ "top": (ct*200).toString()+"px"});
+		},10);
+		</script>
+	</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Dragon Invaders</title>
+		<style>
+			body{
+				background-color:black; 
+			}
+			#openSlide{
+				visibility: visible;
+			}
+			#generalSlide{
+				visibility: hidden;
+			}
+			#endSlide{
+				visibility: hidden;
+			}
+			.slide{
+				color: white;
+				position:absolute;
+				width:93%;
+				float:top;
+				padding:30px;
+			}
+			#playerShip{
+				position: absolute;
+				top:30px;
+				width:200px;
+				left:320px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<img id="playerShip" src="https://ryanmurphyblog.files.wordpress.com/2015/04/space-invader.png" alt="Your Ship">
+		<div id="openSlide" class="slide">
+			<h1>Dragon Invaders</h1>
+			<p>Arrows to move side to side<br>Don't let them eat you or shoot you. <br>If you win you might get a fabolous prize.</p>
+			<button id="start">START</button>
+		</div>
+		<div id="generalSlide"; class="slide";>
+			<h2 id='playerName'>Player</h4>
+			<h3 id='lives'>Lives : 10</h6>
+			<h3 id='bullets'>Bullets : 10</h6>
+		</div>
+		<div id="endSlide" class="slide";>
+			<h1>You did a Great Job I think. But you are dead.</h1>
+			<button id="restart">Restart</button>
+		</div>
+		<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+		<script>
+			var startButton=document.getElementById("start");
+			var restartButton=document.getElementById("restart");
+			var openSlide=document.getElementById("openSlide");
+			var generalSlide=document.getElementById("generalSlide");
+			var lives=document.getElementById("lives");
+			var bullets=document.getElementById("bullets");
+			var endSlide=document.getElementById("endSlide");
+			var playerName = document.getElementById("playerName");
+			var player=document.getElementById("playerShip");
+			var hideAllBut=function(exclude){
+				generalSlide.style.visibility="hidden";
+				openSlide.style.visibility="hidden";
+				endSlide.style.visibility="hidden";
+				if(exclude===0||exclude==='openSlide'){
+					openSlide.style.visibility="visible";
+				}
+				else if(exclude===1||exclude==='generalSlide'){
+					generalSlide.style.visibility="visible";
+				}
+				if(exclude===2||exclude==='endSlide'){
+					endSlide.style.visibility="visible";
+				}
+			};
+			var startFunction=function(){
+				hideAllBut('generalSlide');
+				player.style.top=(innerHeight*0.74).toString()+"px";
+				player.style.left=(innerWidth/2).toString()+"px";
+				player.style.width="100px";
+				playerName.textContent=prompt("whats your name?");
+			};
+			var restartFunction=function(){
+				hideAllBut('openSlide');
+				//reset a lot of variables
+			};
+			startButton.addEventListener("click",startFunction);
+			restartButton.addEventListener("click",restartFunction);
+
+			var sumOfArrays=function(a,b){
+				result=[]
+				if(a.length===b.length){
+					for(var i = 0; i<b.length; i++){
+						result.push(a[i]+b[i]);
+					}
+				}
+				else{
+					result=a
+					for(var i = 0; i<b.length; i++){
+						result.push(b[i]);
+					}
+				}
+				return(result)
+			};
+
+			var magnitudeOfArray=function(x){
+				result=0;
+				for(var i =0; i<x.length; i++){
+					result+=x[i]**2;
+				}
+				result=Math.sqrt(result);
+				return(result);
+			};
+
+			var keyAction={
+				32:"space",
+				37:"left",
+				38:"up",
+				39:"right",
+				40:"down",
+				67:"c"
+			};
+
+			var Ship=function(p,v,a,m){
+				this.p=p;
+				this.v=v;
+				this.a=a;
+				this.m=m;
+			};
+			/*Ship.prototype.draw=function(){
+				var shipPicUrl='<img src="https://ryanmurphyblog.files.wordpress.com/2015/04/space-invader.png">';
+				this.shipElement=$(shipPicUrl);
+				this.shipElement.css({
+					position:"absolute",
+					width:this.m*100,
+					left:this.p[0],
+					top:this.p[1]
+				});
+				$("body").append(this.shipElement);
+			}*/
+			Ship.prototype.update=function(){
+				//Please note, the moving functions really 
+				//are not set up for certical motion currently
+				//Add more conditionals to keep it from going 
+				//off the screen vertically later, (before adding vertical motion)
+				if(this.p[0]<innerWidth*0.91&&this.v[0]>0){
+					this.p=sumOfArrays(this.v,this.p);
+				}
+				else if(this.p[0]>0&&this.v[0]<0){
+					this.p=sumOfArrays(this.v,this.p);
+				}
+				if(this.v[0]<15&&this.a[0]>0){
+					this.v=sumOfArrays(this.v,this.a);
+				}
+				else if(this.v[0]>-15&&this.a[0]<0){
+					this.v=sumOfArrays(this.v,this.a);	
+				}
+				player.style.top=(this.p[1]).toString()+"px";
+				player.style.left=(this.p[0]).toString()+"px";
+			};
+			Ship.prototype.move=function(direction){
+				if(this.a[0]>-3&&direction==="left"){
+					this.a[0]-=1.5;
+				}
+				else if(this.a[0]<3&&direction==="right"){
+					this.a[0]+=1.5;
+				}
+				else if(direction!=="right"&&direction!=="left"){
+					this.a[0]=0;
+					this.v[0]*=0.2;
+				}
+			};
+			var ship=new Ship([innerWidth/2,innerHeight*0.79],[0,0],[0,0],1);
+
+			$("body").keydown(function (event) {
+				var direction=keyAction[event.keyCode];
+				ship.move(direction);
+			});
+
+			setInterval(function(){
+				ship.update();
+				//ship.draw();
+			},60);
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Dragon Invaders</title>
+		<style>
+			body{
+				background-color:black; 
+			}
+			#openSlide{
+				visibility: visible;
+				background-color: blue; 
+			}
+			#generalSlide{
+				visibility: hidden;
+				background-color: black;
+			}
+			#endSlide{
+				visibility: hidden;
+				background-color: black;
+			}
+			.slide{
+				position:absolute;
+				width:100%;
+				float:top;
+				padding:30px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="openSlide"; class="slide";>
+			<h1>Dragon Invaders</h1>
+			<p>Arrows to move side to side<br>Don't let them eat you or shoot you. <br>If you win you might get a fabolous prize.</p>
+			<button id="start">START</button>
+		</div>
+		<div id="generalSlide"; class="slide";>
+			<h6 id='lives'>Lives : 10</h6>
+			<h6 id='bullets'>Bullets : 10</h6>
+		</div>
+		<div id="endSlide" class="slide";>
+			<h1 id="congragulations">You did a Great Job I think. But you are dead.</h1>
+			<button id="restart">Restart</button>
+		</div>
+		<canvas id="canvas" width="700" height="700"></canvas>
+		<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+		<script>
+			var canvas=document.getElementById("canvas");
+			var ctx=canvas.getContext("2d");
+			var cWidth = canvas.width;
+			var cHeight = canvas.height;
+			
+			var sumOfArrays=function(a,b){
+				result=[]
+				if(a.length===b.length){
+					for(var i = 0; i<b.length; i++){
+						result.push(a[i]+b[i]);
+					}
+				}
+				else{
+					result=a
+					for(var i = 0; i<b.length; i++){
+						result.push(b[i]);
+					}
+				}
+				return(result)
+			};
+
+			var magnitudeOfArray=function(x){
+				result=0;
+				for(var i =0; i<x.length; i++){
+					result+=x[i]**2;
+				}
+				result=Math.sqrt(result);
+				return(result);
+			};
+
+			var keyAction={
+				32:"space",
+				37:"left",
+				38:"up",
+				39:"right",
+				40:"down",
+				67:"c"
+			};
+
+			var Ship=function(p,v,a,m){
+				this.p=p;
+				this.v=v;
+				this.a=a;
+				this.m=m;
+			};
+			Ship.prototype.update=function(){
+				if(this.p[0]<cWidth&&this.v[0]>0){
+					this.p=sumOfArrays(this.v,this.p);
+				}
+				else if(this.p[0]>0&&this.v[0]<0){
+					this.p=sumOfArrays(this.v,this.p);
+				}
+				if(this.v[0]<15&&this.a[0]>0){
+					this.v=sumOfArrays(this.v,this.a);
+				}
+				else if(this.v[0]>-15&&this.a[0]<0){
+					this.v=sumOfArrays(this.v,this.a);	
+				}
+			};
+			Ship.prototype.draw=function(){
+				var shipPicUrl='<img src="https://ryanmurphyblog.files.wordpress.com/2015/04/space-invader.png">';
+				var shipElement=$(shipPicUrl);
+				shipElement.css({
+					position:"absolute",
+					left:this.p[0],
+					top:this.p[1],
+					width:this.m*100
+				});
+				$("body").append(shipElement);
+			}
+			Ship.prototype.move=function(direction){
+				if(this.a[0]>-3&&direction==="left"){
+					this.a[0]-=2;//Maybe add decay into acceleration growth, more acceleration, harder to accelerate
+				}
+				else if(this.a[0]<3&&direction==="right"){
+					this.a[0]+=2;
+				}
+				else if(direction!=="right"&&direction!=="left"){
+					this.a[0]=0;
+					this.v[0]*=0.25;
+				}
+			};
+			var ship=new Ship([0,0],[0,0],[0,0],1);
+
+			$("body").keydown(function (event) {
+				var direction=keyAction[event.keyCode];
+				ship.move(direction);
+			});
+
+			setInterval(function(){
+				ctx.clearRect(0,0,cWidth,cHeight);
+
+				ship.draw();
+				ship.update();
+
+				ctx.strokeRect(0,0,cWidth,cHeight);
+			},60);
+
+		</script>
+	</body>
+</html>
