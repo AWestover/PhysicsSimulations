@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>target-div</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alek's Text Manipulator</title>
+  <style>
+    body {
+      background-color:black;
+    }
+    .text {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="text" id='description'>Fix that text</h1>
+  <h2 class="text">Input the name of your file</h2>
+  <input type="text" class="text" id ="fileName" value="file">
+  <p class="text">Which file name converter function would you like to use?
+(reverseAll, allForward, or allBackward, defaults to reverseAll)</p>
+  <input type ="text" class="text" id ="converter" value="reverseAll">
+  <h3 class="text" id='oldFileName'>file</h3>
+  <h3 class="text" id='newFileName'>file</h3>
+        
+  <h2 class="text">Turn a file name into a series of cd's here 
+(file name must contain all forward slahes, use above functionality to fix the name if neccecary)</h2>
+  <input type="text" class="text" id="toCDer" value="alek/westover">
+  <h2 class="text" id="cds">['cd alek','cd westover']</h2>
+
+  <script src="clipboard.js-master/clipboard.js-master/dist/clipboard.min.js"></script>
+
+  <script>
+    var fileName=document.getElementById("fileName");
+    var converter=document.getElementById("converter");
+    var toCDer=document.getElementById("toCDer");
+    var clipboard = new Clipboard('#printNew');
+            
+    var printFileName=function(){
+      console.log(fileName.value);
+      document.getElementById("oldFileName").innerHTML=fileName.value;
+    }
+    var reverseSlashes=function(){
+      var newFileName='';
+      if(converter.value==='allForward'){
+        for (var i =0; i<fileName.value.length; i++){
+          if(fileName.value[i]==='/' || fileName.value[i]==='\\') {
+            newFileName+='/';
+          }
+          else {
+            newFileName += fileName.value[i];
+          }
+        }
+      }
+      else if(converter.value==='allBackward'){
+        for (var i =0; i<fileName.value.length; i++){
+          if(fileName.value[i]==='/' || fileName.value[i]==='//') {
+            newFileName+='\\';
+          }
+          else{
+            newFileName+=fileName.value[i];
+          }
+        }
+      }
+      else {
+        for (var i =0; i<fileName.value.length; i++){
+          if(fileName.value[i]==='/'){
+            newFileName += '\\';
+          }
+          else if(fileName.value[i]==='\\'){
+            newFileName+='/';                     
+          }
+          else{
+            newFileName+=fileName.value[i];
+          }
+        }
+      }
+
+      document.getElementById("newFileName").innerHTML=newFileName;
+      console.log(newFileName);
+    }
+            
+    var toCDlist=function(){
+      var result='[';
+      var cdlist=toCDer.value.split('/');
+      for (var i =0; i<cdlist.length-1; i++){
+        result+="'cd "+cdlist[i]+"',";   
+      }
+      result+="'cd "+cdlist[cdlist.length-1]+"']";
+      document.getElementById("cds").innerHTML=result;
+      console.log(result);
+    }
+        
+  </script>
+        
+  <button onclick="printFileName()" id="printOld">Print that file name man</button>
+  <button data-clipboard-action="copy" data-clipboard-target="h3" onclick="reverseSlashes()" id="printNew" class="btn">Print the new file name</button>
+  <button onclick="toCDlist()" id="printCDs">Print the cd list</button>
+        
+</body> 
+</html>
