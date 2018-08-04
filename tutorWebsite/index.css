@@ -1,4 +1,17 @@
 
+/* phone size cuttoff is 600px */
+
+html {
+  font-size: 12px;
+}
+
+@media (min-width: 600px) {
+    html {
+        font-size: 20px;
+    }
+}
+
+
 body {
   background-color: #dce1e8;
 }
@@ -9,13 +22,44 @@ body {
 }
 
 #contact {
-  background-color: #f25467; 
+  background-color: #ce0018; /* light red */
+}
+
+#contact h1 {
+  font-size: 150%;
+}
+
+@media (min-width: 600px) {
+    #contact h1{
+        font-size: 200%;
+    }
+}
+
+
+
+a#email {
+  text-decoration: underline;
 }
 
 .card {
   padding: 2%;
-  background-color: #99b7e8;
   font-family: Trebuchet MS;
+}
+
+.card#offer {
+  background-color: #99b7e8; /* light blue */
+}
+
+.card#qualifications {
+  background-color: #81c693; /* light green */
+}
+
+.card#pursuits {
+    background-color: #bcc9dd; /* greyish blue */
+}
+
+.card#about {
+  background-color: #cacbb1; /* light silver */ 
 }
 
 .container {
