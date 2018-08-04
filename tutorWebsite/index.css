@@ -1,0 +1,27 @@
+
+body {
+  background-color: #dce1e8;
+}
+
+#title {
+  font-family: helvetica;
+  text-decoration: underline;
+}
+
+#contact {
+  background-color: #f25467; 
+}
+
+.card {
+  padding: 2%;
+  background-color: #99b7e8;
+  font-family: Trebuchet MS;
+}
+
+.container {
+    padding: 1%;
+}
+
+img {
+  width: 100%;
+}
