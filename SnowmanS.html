@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Alek's Game</title>    
+        <script src= "http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.4.8/processing.min.js">
+        </script>
+        <style>
+        canvas{position: relative; left:50px;}
+        body{background-color: black}
+        h1{background-color: red; color:black; position: relative; left:0px; width:100%; text-align: center;}
+        </style>
+    </head>
+    <body>
+        <h1>A Cool game made by a cool person</h1>
+        <canvas id = "canvas" width =600 height =400></canvas>
+    <script>// position of the ball
+    var canx = 600;
+    var cany = 400;
+    var canvas = document.getElementById("canvas");
+    var processing = new Processing(canvas, function(processing) {
+        processing.size(canx, cany);
+        processing.background(0xFFF);
+        var mouseIsPressed = false;
+        processing.mousePressed = function () {
+            mouseIsPressed = true; 
+        };
+        processing.mouseReleased = function () {
+            mouseIsPressed = false; 
+        };
+        var keyIsPressed = false;
+        processing.keyPressed = function () { 
+            keyIsPressed = true; 
+        };
+        processing.keyReleased = function () { 
+            keyIsPressed = false; 
+        };
+        function getImage(s) {
+            var url = "https://www.kasandbox.org/programming-images/" + s + ".png";
+            processing.externals.sketch.imageCache.add(url);
+            return processing.loadImage(url);
+        }
+        with (processing) { 
+// controling variables for animation
+var xpos = 143;
+var ypos = 235;
+var leftX = 136;
+var rightX = 295;
+var bodySize = 47;
+var bulletX = 130;
+var bulletY = 10 + ypos;
+//var walkspeed = 1;
+var walkct = 0;
+var stance = 0;
+var maxlvl = 3;
+var sunDiameter = 86;
+var screenSpeed = 3;
+var g = 0.4;
+var h = 150;
+var v0 = sqrt(2*g*h);
+var vy = v0;
+//bool variables
+var cloud = 0;
+var goup = 0;
+var godown = 0;
+var onground = 1;
+var bulletFired = 0;
+var instructions = 0;
+//stats
+var level = 0;
+var points = 10;
+var amo = 0;
+var obstaclesLeft = 10;
+var DonutsLeft = 10;
+var mode = 0;
+//arrays
+var grassXs = [];
+var obstacles =[];
+var donuts = [];
+var Obstacle=function(x,h) {
+    this.x = x;
+    this.h = h;
+};
+Obstacle.prototype.draw = function() {
+    fill(255, 200, 0);
+    //noStroke();
+    rectMode(CENTER);
+    rect(this.x, 375-this.h/2, 50, this.h);
+};
+var Donuts=function(x,y) {
+    this.x = x;
+    this.y = y;
+};
+Donuts.prototype.draw = function() {
+    fill(135, 120, 66);
+    ellipse(this.x, this.y, 50, 50);
+    fill(255, 255, 255);
+    ellipse(this.x, this.y, 10, 10);
+};
+var drawSunRay = function() {
+    noStroke();
+    triangle(16, sunDiameter, 18, sunDiameter/2, 0, 0);
+};
+var drawSun = function() {
+    //draw sun rays
+    for(var i = 0; i < 360; i += 10){
+       pushMatrix();
+       translate(200,78);
+       rotate(i);
+       drawSunRay();
+       popMatrix();
+    }
+};
+var drawSnowman = function() {
+    strokeWeight(2);
+    stroke(0, 0, 0);
+    fill(255, 255, 255);
+    ellipse(xpos+60, ypos+bodySize/2, bodySize, bodySize); // body
+    ellipse(xpos+60, ypos-bodySize/6,bodySize/2, bodySize/2); // face
+    ellipse(xpos+65,ypos+bodySize*1.2,bodySize+15, bodySize+15);//bottom
+    ellipse(xpos+66,ypos-bodySize/4,bodySize/9,bodySize/9);//lefteye
+    ellipse(xpos+55,ypos-bodySize/4,bodySize/9,bodySize/9);//righteye
+    point(xpos+66,ypos-bodySize/4);//lefteye
+    point(xpos+55,ypos-bodySize/4);//righteye
+    fill(148, 16, 16);
+    ellipse(xpos+60,ypos-6,bodySize/6,bodySize/6);//mouth
+    fill(0, 0, 0);
+    if(stance === 0){
+        line(xpos+82,ypos+83,xpos+87,ypos+124);//right leg
+        line(xpos+87,ypos+124,xpos+105,ypos+122);//right foot
+        line(xpos+57,ypos+85,xpos+57,ypos+124);//left leg
+        line(xpos+57,ypos+125,xpos+70,ypos+124);//left foot
+        line(xpos+84,ypos+21,xpos+108,ypos+14);//right arm
+        ellipse(xpos + 108,ypos + 14,5,5);//right hand
+        line(xpos+35,ypos+20,xpos+14,ypos+20);//left arm
+        ellipse(xpos + 14,ypos + 20,5,5);//left hand
+    }
+    if(stance === 1){
+        line(xpos+82,ypos+83,xpos+121,ypos+124);//right leg
+        line(xpos+121,ypos+124,xpos+129,ypos+116);//right foot
+        line(xpos+57,ypos+85,xpos+37,ypos+108);//left leg p1
+        line(xpos+37,ypos+108,xpos+5,ypos+92);//left leg p2
+        line(xpos+5,ypos+92,xpos+-3,ypos+102);//left foot
+        line(xpos+84,ypos+21,xpos+103,ypos+33);//right arm p1
+        line(xpos+103,ypos+33,xpos+125,ypos+21);//right arm p2
+        ellipse(xpos + 125,ypos + 21,5,5);//right hand
+        line(xpos+40,ypos+12,xpos+20,ypos+34);//left arm
+        line(xpos+20,ypos+34,xpos+21,ypos+51);//left arm p2
+        ellipse(xpos + 21,ypos + 51,5,5);//left hand
+    }
+    else if(stance === 2){
+        line(xpos+82,ypos+83,xpos+96,ypos+98);//right leg p1
+        line(xpos+96,ypos+98,xpos+98,ypos+118);//right leg p2
+        line(xpos+98,ypos+118,xpos+115,ypos+117);//right foot
+        line(xpos+67,ypos+88,xpos+62,ypos+105);//left leg p1
+        line(xpos+62,ypos+105,xpos+46,ypos+110);//left leg p2
+        line(xpos+46,ypos+110,xpos+58,ypos+120);//left foot
+        line(xpos+84,ypos+21,xpos+110,ypos+36);//right arm
+        ellipse(xpos + 110,ypos + 36,5,5);//right hand
+        line(xpos+52,ypos+12,xpos+42,ypos+44);//left arm
+        line(xpos+42,ypos+44,xpos+58,ypos+62);//left arm p2
+        ellipse(xpos + 58,ypos + 62,5,5);//left hand
+    }
+    else if(stance === 3){
+        line(xpos+82,ypos+83,xpos+107,ypos+86);//right leg p1
+        line(xpos+107,ypos+86,xpos+98,ypos+112);//right leg p2
+        line(xpos+98,ypos+112,xpos+115,ypos+116);//right foot
+        line(xpos+57,ypos+85,xpos+31,ypos+118);//left leg
+        line(xpos+31,ypos+118,xpos+33,ypos+130);//left foot
+        line(xpos+58,ypos+14,xpos+71,ypos+49);//right arm p1
+        line(xpos+71,ypos+49,xpos+109,ypos+59);//right arm p2
+        ellipse(xpos + 109,ypos + 59,5,5);//right hand
+        line(xpos+46,ypos+4,xpos+22,ypos+24);//left arm
+        line(xpos+22,ypos+24,xpos+36,ypos+41);//left arm p2
+    }
+    else if(stance === 4){
+        line(xpos+82,ypos+83,xpos+114,ypos+76);//right leg p1
+        line(xpos+114,ypos+76,xpos+151,ypos+95);//right leg p2
+        line(xpos+151,ypos+95,xpos+164,ypos+84);//right foot
+        line(xpos+57,ypos+85,xpos+37,ypos+108);//left leg p1
+        line(xpos+37,ypos+108,xpos+5,ypos+92);//left leg p2
+        line(xpos+5,ypos+92,xpos+-3,ypos+102);//left foot
+        line(xpos+84,ypos+21,xpos+103,ypos+17);//right arm p1
+        line(xpos+103,ypos+17,xpos+109,ypos+-4);//right arm p2
+        ellipse(xpos + 109,ypos +- 4,5,5);//right hand
+        line(xpos+40,ypos+12,xpos+20,ypos+34);//left arm
+        line(xpos+20,ypos+34,xpos+21,ypos+51);//left arm p2
+        ellipse(xpos + 21,ypos + 51,5,5);//left hand
+    }
+};
+var bulletHitsBlock = function(obstacles){
+    if((obstacles.x >= bulletX)&&(obstacles.x <= (bulletX + 20))&&(375-obstacles.h <= bulletY) && (bulletFired === 1 && bulletY > 0)){
+        obstacles.h=0;
+        points++;
+        bulletY = -400;
+        bulletX = 130;
+        bulletFired = 0;
+        amo -= 1;
+        obstaclesLeft --;
+    }
+};
+var SnowmanHitsDonut = function(donuts){
+    if((xpos+60 >= donuts.x)&& (xpos+60 <= (donuts.x + 50))){
+        if((ypos-bodySize/6) >= donuts.y && ypos-bodySize/6 <= (donuts.y + 50)){
+            points += 1;
+            DonutsLeft --;
+            donuts.y = -400;
+        }
+    }
+};
+var SnowmanPassesBlock = function(obstacle){
+    if(obstacle.h>20){
+        if((xpos+80+bodySize)>(obstacle.x-25)){
+            if(((ypos+70)>(375-((obstacle.h)/2)))&&(obstacle.h>20)){
+                points -= 5;
+                obstaclesLeft --;
+                obstacle.h=0;
+            }
+            else{
+                obstaclesLeft --;
+                obstacle.h=0;
+            }
+        }
+    }
+};
+draw = function() {
+    if(obstaclesLeft === 0 && level < maxlvl){
+        level ++;
+        obstacles = [];
+        grassXs = [];
+        donuts = [];
+        for (var i = 0; i < 37; i++) { 
+            grassXs.push(i*17);
+        }
+        obstaclesLeft = 1;
+        if(level === 1){
+            obstaclesLeft = 10;
+            amo = 10;
+            DonutsLeft = 10;
+            screenSpeed = 3;
+        }
+        if(level === 2){
+            obstaclesLeft = 100;
+            DonutsLeft = 100;
+            amo += 45;
+            screenSpeed = 3;
+        }
+        if(mode === 1 && level < maxlvl){
+            obstaclesLeft *= 2;
+            amo -= 15;
+            screenSpeed +=1;
+        }
+        if(mode === 2 && level < maxlvl){
+            obstaclesLeft *= 3;
+            amo -= 30;
+            screenSpeed += 2;
+        }
+        for (var i = 0; i < obstaclesLeft; i += 1) {  
+            obstacles.push(new Obstacle(random(400*(i+1), 800*(i+1)), random(50, 300)));
+        }
+        for (var i = 0; i < DonutsLeft; i +=1) {  
+            donuts.push(new Donuts(random(400*(i+1), 2000*(i+1)), random(50, 300)));
+        }
+    }
+    if(level===0){
+        background(38, 0, 255);
+        drawSnowman();
+        fill(0, 0, 0);
+        textSize(50);
+        text("RUN",135,150);
+        noFill();
+        strokeWeight(3);
+        rect(130,110,120,50);
+        if(instructions===0){
+            textSize(20);
+            text("How To Play",25,280);
+            noFill();
+            rect(20,255,125,35);
+            if(mouseIsPressed && 20 < mouseX && mouseX < 145 && 255<mouseY && mouseY<290){
+                instructions = 1;
+                //playSound(getSound("rpg/door-open"));
+            }
+        }
+        if(mouseIsPressed&&130<mouseX&&mouseX<250&&110<mouseY&&mouseY<160){
+            obstaclesLeft = 0;
+        }
+        if(instructions === 1 && xpos<275){
+            xpos += 1;
+            if(walkct < 15){
+                stance = 1;
+                walkct++;
+            }
+            else if(walkct === 15){
+                ypos += 10;
+                walkct++;
+            }
+            else if(15 < walkct && walkct < 30){
+                stance = 2;
+                walkct++;
+            }
+            else if(walkct === 30){
+                ypos -= 10;
+                walkct++;
+            }
+            else if(30 < walkct && walkct < 45){
+                stance = 3;
+                walkct++;
+            }
+            else if(walkct === 45){
+                ypos -= 20;
+                walkct++;
+            }
+            else if(45 < walkct && walkct < 60){
+                stance = 4;
+                walkct++;
+            }
+            else if(walkct >= 60){
+                walkct = 0;
+                stance = 1;
+                ypos += 20;
+            }
+        }
+        if(xpos>=275){
+            stance = 0;
+            fill(0, 0, 0);
+            textSize(15);
+            text("Use the space bar or up arrow to jump. Press the Right arrow key to shoot stuff. You can only shoot if you have enough amo which is listed at the top of the screen along with level, obstacles left, and points. Avoid or shoot the obstacles to gain points. After you have avoided a certain number of obstacles you will advance a level and gain points. Good luck! Press RUN to begin.",11,190,275,400);
+            noFill();
+            rect(5,182,278,193);
+        }
+    }
+    if(level > 0  && level < maxlvl && points >= 0){    
+        xpos = 20;
+        background(135, 165, 255);
+        fill(255, 170, 0);
+        drawSun();
+        ellipse(200, 80, sunDiameter, sunDiameter);
+        // clouds 
+        fill(255, 255, 255);
+        noStroke();
+        // left cloud
+        ellipse(leftX, 50, 126, 97);
+        ellipse(leftX+62, 50, 70, 60);
+        ellipse(leftX-62, 50, 70, 60);
+        // right cloud
+        ellipse(rightX, 100, 126, 97);
+        ellipse(rightX+62, 100, 70, 60);
+        ellipse(rightX-62, 100, 70, 60);
+        fill(0, 0, 0);
+        textSize(17);
+        text("AMO : " + amo,leftX-35,38);
+        text("OBSTACLES LEFT : " + obstaclesLeft,leftX-92,57);
+        text("LEVEL : " +  level,rightX-45,92);
+        text("POINTS : " +  points,rightX-45,114);
+        //animation
+        if(leftX > 75 && cloud===0){
+            leftX -= 0.5;
+            rightX += 0.5;
+            sunDiameter += 0.1;
+        }
+        if(leftX <= 75 || cloud === 1 && leftX<350){
+            leftX += 0.5;
+            rightX -= 0.5;
+            sunDiameter -= 0.1;
+            cloud = 1;
+        }
+        if(leftX>=350){
+            cloud = 0;
+        }
+        stroke(0, 0, 0);
+        if(keyIsPressed){
+            if(key.toString()==='f'){
+                bodySize+=0.5;
+            }
+            if(key.toString()==='u'){
+                ypos-=1;
+            }
+            if(key.toString()==='a'){
+                amo+=1;
+            }
+            if(key.toString()==='r'){
+                xpos+=500;
+            }
+            if(key.toString()==='l'){
+                xpos-=500;
+            }
+            if(onground===1 && key.code===32 || keyCode === UP && onground===1){
+                goup = 1;
+                onground = 0;
+            }          
+            if(keyCode===RIGHT && onground === 1 && amo > 0 && bulletFired === 0){
+                bulletFired = 1;
+                bulletY = ypos + 10;
+            }
+            if(keyCode===DOWN && onground === 1 && ypos < 325){
+                godown = 1;
+            }
+        }
+        if(godown ===1){
+            ypos += 10;
+            godown = 0;
+        }
+        if(bulletX<600&&bulletFired===1){
+            line(xpos+108,ypos+27,xpos+108,ypos+9);//gun part 1
+            line(xpos+109,ypos+11,xpos+136,ypos+11);//gun part 2
+            fill(255, 0, 0);
+            ellipse(bulletX,bulletY,10,10);
+            bulletX+=6;
+        }
+        if(bulletX>=600){
+            bulletX = 130;
+            bulletFired = 0;
+            amo -= 1;
+        }
+        if(onground===0){
+            if(vy>0&&goup===1){
+                ypos -= vy;
+                vy -= g;
+            }
+            else if(vy<=0 || goup === 0 && ypos <= 235){
+                goup = 0;
+                ypos += vy;
+                vy += g;
+            }
+            else if(ypos >= 235){
+                ypos = 235;
+                vy = v0;
+                onground = 1;
+            }
+        }
+        if(bulletFired === 0 && onground === 1 && godown === 0){
+            if(walkct < screenSpeed*3){
+                stance = 1;
+                walkct++;
+            }
+            else if(walkct === screenSpeed*3){
+                ypos += 10;
+                walkct++;
+            }
+            else if(screenSpeed*3 < walkct && walkct < screenSpeed*6){
+                stance = 2;
+                walkct++;
+            }
+            else if(walkct === screenSpeed*6){
+                ypos -= 10;
+                walkct++;
+            }
+            else if(screenSpeed*6 < walkct && walkct < screenSpeed*9){
+                stance = 3;
+                walkct++;
+            }
+            else if(walkct === screenSpeed*9){
+                ypos -= 20;
+                walkct++;
+            }
+            else if(screenSpeed*9 < walkct && walkct < screenSpeed*15){
+                stance = 4;
+                walkct++;
+            }
+            else if(walkct >= screenSpeed*15){
+                walkct = 0;
+                stance = 1;
+                ypos += 20;
+            }
+        }
+        else{
+            stance = 0;
+        }
+        drawSnowman();
+        for (var i = 0; i < obstacles.length; i++) {
+            obstacles[i].draw();
+            obstacles[i].x -= screenSpeed;
+            bulletHitsBlock(obstacles[i]);
+            SnowmanPassesBlock(obstacles[i]);
+        }
+        for (var i = 0; i < donuts.length; i++) {
+            donuts[i].draw();
+            donuts[i].x -= screenSpeed;
+            SnowmanHitsDonut(donuts[i]);
+        }
+        for (var i = 0; i < grassXs.length; i++) {
+            image(getImage("cute/GrassBlock"), grassXs[i], height* 0.90, 20, 40);
+            grassXs[i] -= screenSpeed;
+            if (grassXs[i] <= -20) {grassXs[i] = width;}
+        }
+    }
+    if(level === maxlvl){
+        background(0, 255, 68);
+        stance = 0;
+        ypos = 245;
+        xpos = 125;
+        rectMode(LEFT);
+        drawSnowman();
+        fill(0, 0, 0);
+        textSize(50);
+        text("You won!",95,100);
+        textSize(20);
+        text("RESTART GAME",234,35);
+        text("You have "+amo+" amo left!",105,130);
+        text("You have "+points+" points!",105,155);
+        text("Your final score is " + (points + amo*2)+".",105,180);
+        noFill();
+        if((points + amo*2)>500){
+            text("You got a really high score!",105,205);
+            text("Extremely Hard Mode",10,35);
+            rect(8,8,198,35);
+            if(mouseIsPressed && 8 < mouseX && mouseX < 206 && 8 < mouseY && mouseY < 43){
+                level = 0;
+                mode = 2;
+                points = 50;
+                xpos = 150;
+                instructions = 0;
+                //playSound(getSound("rpg/door-open"));
+            }
+        }
+        else if((points + amo*2)>=100){
+            text("Good Job!",150,205);
+            text("HARD MODE",10,35);
+            rect(8,8,134,35);
+            if(mouseIsPressed && 8 < mouseX && mouseX < 206 && 8 < mouseY && mouseY < 43){
+                level = 0;
+                mode = 1;
+                points = 50;
+                xpos = 150;
+                instructions = 0;
+                //playSound(getSound("rpg/door-open"));
+            }
+        }
+        else if((points + amo*2)<100){
+            text("Play again to improve your score.",50,205);
+        }
+        rect(232,8,163,35);
+        if(mouseIsPressed && 232 < mouseX && mouseX < 395 && 8 < mouseY && mouseY < 43){
+            level = 0;
+            mode = 0;
+            points = 10;
+            xpos = 150;
+            instructions = 0;
+        }
+    }
+    if(points < 0){
+        background(250, 0, 92);
+        stance = 0;
+        ypos = 245;
+        xpos = 125;
+        rectMode(LEFT);
+        drawSnowman();
+        fill(0, 0, 0);
+        textSize(50);
+        text("You Lose",77,154);
+        textSize(20);
+        text("RESTART GAME",234,35);
+        noFill();
+        rect(232,8,163,35);
+        if(mouseIsPressed && 232 < mouseX && mouseX < 395 && 8 < mouseY && mouseY < 43){
+            level = 0;
+            mode -= 1;
+            points = 50;
+            xpos = 150;
+            instructions = 0;
+            points = 10;
+        }
+    }
+};
+}
+        if (typeof draw !== 'undefined') processing.draw = draw;
+    });
+    </script>
+    </body>
+</html>
